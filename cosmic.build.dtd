@@ -1,0 +1,9 @@
+<!ELEMENT build (jar*)>
+<!ELEMENT jar (manifest?,source+)>
+<!ATTLIST jar file CDATA #REQUIRED>
+<!ELEMENT manifest (attribute+)>
+<!ELEMENT attribute (#PCDATA)>
+<!ATTLIST attribute name CDATA #REQUIRED>
+<!ELEMENT source (exclude*)>
+<!ATTLIST source path CDATA #REQUIRED>
+<!ELEMENT exclude (#PCDATA)>

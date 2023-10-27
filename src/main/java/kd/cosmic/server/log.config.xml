@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--30 seconds  scan="true" scanPeriod="1 minutes" from common-->
+<configuration>
+    <property name="LOG_HOME" value="../logs"/>
+    <appender name="metric" class="kd.bos.metric.instruments.logback.MetricAppender"></appender>
+    <appender name="std" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss} [%thread] %level %logger.%M\(%L\):%m%n</pattern>
+        </layout>
+    </appender>
+    <appender name="kafka" class="kd.bos.logging.console.slf4j.logback.KafkaAppender">
+        <topic>{{clusterName}}-log</topic>
+        <brokerList>{{log.kafka.ip_port}}</brokerList>
+        <compressionType>none</compressionType>
+        <syncSend>false</syncSend>
+        <keySerializerClass>org.apache.kafka.common.serialization.StringSerializer</keySerializerClass>
+        <valueSerializerClass>org.apache.kafka.common.serialization.StringSerializer</valueSerializerClass>
+    </appender>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/log.%d{yyyy-MM-dd}(%i).log</FileNamePattern>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <maxHistory>5</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>10MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf-8</charset>
+            <pattern>%d{HH:mm:ss} [%thread] %level %logger.%M\(%L\):%m%n</pattern>
+        </encoder>
+        <append>false</append>
+        <prudent>false</prudent>
+    </appender>
+    <logger name="org.javaswift.joss.command.impl.core.AbstractCommand" additivity="false" level="OFF">
+        <appender-ref ref="std"/>
+    </logger>
+    <logger name="org.ehcache" additivity="false" level="OFF">
+        <appender-ref ref="std"/>
+    </logger>
+    <logger name="org.apache" additivity="false" level="ERROR">
+        <appender-ref ref="std"/>
+    </logger>
+    <logger name="kd.bos.dc.utils.AccountUtils" additivity="false" level="ERROR">
+        <appender-ref ref="kafka"/>
+    </logger>
+    <logger name="kd.bos.license" additivity="false" level="ERROR">
+        <appender-ref ref="std"/>
+    </logger>
+    <root name="DB" additivity="false" level="INFO">
+        <appender-ref ref="std"/>
+    </root>
+    <root level="INFO">
+        <appender-ref ref="file"/>
+    </root>
+</configuration>

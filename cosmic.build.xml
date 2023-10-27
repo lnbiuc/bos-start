@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE build SYSTEM "cosmic.build.dtd">
+<build>
+    <jar file="out/bos.jar">
+        <source path="out/production/bos/">
+            <exclude>kd/cosmic/**</exclude>
+        </source>
+    </jar>
+</build>
