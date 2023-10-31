@@ -3,10 +3,8 @@ package com.pur.formplugin;
 import kd.bos.dataentity.entity.DynamicObject;
 import kd.bos.dataentity.entity.DynamicObjectCollection;
 import kd.bos.entity.plugin.AbstractOperationServicePlugIn;
-import kd.bos.entity.plugin.args.AfterOperationArgs;
 import kd.bos.entity.plugin.args.BeforeOperationArgs;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -18,8 +16,8 @@ public class VerifySave extends AbstractOperationServicePlugIn
     {
         super.beforeExecuteOperationTransaction(e);
         String operationKey = e.getOperationKey();
-        //点击保存按钮
-        if (operationKey.equals("save")) {
+        //点提交存按钮
+        if (operationKey.equals("bar_submit")) {
             verifySaveDate(e);
         }
     }
@@ -28,6 +26,42 @@ public class VerifySave extends AbstractOperationServicePlugIn
     {
         DynamicObject[] entities = e.getDataEntities();
         for (DynamicObject bill : entities) {
+
+            if (bill.get("tpv_usage") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("用途不能为空");
+                return;
+            }
+            if (bill.get("tpv_org") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("采购组织不能为空");
+                return;
+            }
+            if (bill.get("tpv_applyorg") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("申请部门不能为空");
+                return;
+            }
+            if (bill.get("tpv_applier") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("申请人不能为空");
+                return;
+            }
+            if (bill.get("tpv_exratetable") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("汇率表不能为空");
+                return;
+            }
+            if (bill.get("tpv_tocurr") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("结算币不能为空");
+                return;
+            }
+            if (bill.get("tpv_exratedate") == null) {
+                e.setCancel(true);
+                e.setCancelMessage("汇率日期不能为空");
+                return;
+            }
 
             DynamicObjectCollection entries = bill.getDynamicObjectCollection("tpv_app_proc_req_fl");
             if (entries.isEmpty() || entries.get(0).get("tpv_materia") == null) {
