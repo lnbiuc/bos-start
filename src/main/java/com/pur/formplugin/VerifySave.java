@@ -16,7 +16,7 @@ public class VerifySave extends AbstractOperationServicePlugIn
     {
         super.beforeExecuteOperationTransaction(e);
         String operationKey = e.getOperationKey();
-        //点提交存按钮
+        //点提交按钮
         if (operationKey.equals("bar_submit")) {
             verifySaveDate(e);
         }
