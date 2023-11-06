@@ -25,9 +25,10 @@ public class PurchaseReportQuery extends AbstractReportListDataPlugin implements
         FilterInfo filterInfo = param.getFilter();
         String billno = filterInfo.getString("tpv_billno_query");//申请单号
         String status = filterInfo.getString("tpv_billstatus_query");//单据状态
+        String type = filterInfo.getString("tpv_type_query");
         List<QFilter> list = new ArrayList<>();
         if (!StringUtils.isEmpty(billno)) {
-            list.add(new QFilter("billno", QCP.equals, billno));
+            list.add(new QFilter("billno", QCP.like, "%" + billno + "%"));
         }
         if (!StringUtils.isEmpty(status)) {
             list.add(new QFilter("billstatus", QCP.equals, status));
@@ -86,21 +87,37 @@ public class PurchaseReportQuery extends AbstractReportListDataPlugin implements
         DataSet procOrderDataSet = ORM.create().queryDataSet(this.getClass().getName(), "tpv_app_proc_order", procOrderFields,
                 list.toArray(new QFilter[0]));
 
-        return union.leftJoin(procOrderDataSet).on("tpv_id", "tpv_id")
-                .select("tpv_billno",
-                        "tpv_type",
-                        "tpv_billstatus",
-                        "tpv_applyorg",
-                        "tpv_applier",
-                        "tpv_date",
-                        "tpv_materia",
-                        "tpv_unit",
-                        "tpv_price",
-                        "tpv_applyqty",
-                        "tpv_orderedqty",
-                        "tpv_amount",
-                        "tpv_orderedquantity",
-                        "tpv_purchaser")
-                .finish();
+        DataSet result = null;
+        String[] resultFields = {"tpv_billno",
+                "tpv_type",
+                "tpv_billstatus",
+                "tpv_applyorg",
+                "tpv_applier",
+                "tpv_date",
+                "tpv_materia",
+                "tpv_unit",
+                "tpv_price",
+                "tpv_applyqty",
+                "tpv_orderedqty",
+                "tpv_amount",
+                "tpv_orderedquantity",
+                "tpv_purchaser"};
+        if (!StringUtils.isEmpty(type)) {
+            list.add(new QFilter("tpv_type", QCP.equals, type));
+            if ("A".equals(type)) {
+                result = procReqDataSet.leftJoin(procOrderDataSet).on("tpv_id", "tpv_id")
+                        .select(resultFields)
+                        .finish();
+            } else if ("B".equals(type)) {
+                result = salesReqDataSet.leftJoin(procOrderDataSet).on("tpv_id", "tpv_id")
+                        .select(resultFields)
+                        .finish();
+            }
+        } else {
+            result = union.leftJoin(procOrderDataSet).on("tpv_id", "tpv_id")
+                    .select(resultFields)
+                    .finish();
+        }
+        return result;
     }
 }
