@@ -24,7 +24,7 @@ public class SetListFilter extends AbstractListPlugin
         qFilterList.add(new QFilter("tpv_org.name", "!=", null));
         // 只能查看当前用户自己创建的
         qFilterList.add(new QFilter("tpv_applier", "=", userId));
-        String[] status = new String[]{"A", "B", "C"};
+        String[] status = new String[]{"A", "B", "C", "D"};
         // 不显示已关闭的单据
         qFilterList.add(new QFilter("billstatus", QCP.in, status));
 
