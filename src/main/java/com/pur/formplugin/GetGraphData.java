@@ -19,28 +19,60 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         // 获取树形单据体数据
         JSONArray treeEntity = this.getView().getFormShowParameter().getCustomParam("entity");
         List<FlowNodeModel> nodeList = entityToNodeList(treeEntity);
-        for (FlowNodeModel node : nodeList) {
-            for (Object entity : treeEntity) {
-                JSONObject entityObject = (JSONObject) entity;
-                if (entityObject.getString("id").equals(node.getNodeId())) {
-                    node.setTitle("title");
-                    node.setSubTitle("subtitle");
-                    node.setInfo1("name");
-                    node.setInfo2("department");
-                    node.setInfo3("status");
-                }
-            }
-        }
+
         List<FlowNodeModel> nodeModels = calcPosition(nodeList);
         String genXml = convertNodeToXml(nodeModels);
         map.put("graph_xml", genXml);
         return map;
     }
 
-    public List<FlowNodeModel> entityToNodeList(JSONArray entity)
+    public List<FlowNodeModel> entityToNodeList(JSONArray jsonArray)
     {
         List<FlowNodeModel> nodeList = new ArrayList<>();
-        createFlowNodeModels(entity, "0", nodeList);
+        createFlowNodeModels(jsonArray, "0", nodeList);
+        System.out.println("JSONObject.toJSONString(nodeList) = " + JSONObject.toJSONString(nodeList));
+        for (FlowNodeModel node : nodeList) {
+            for (Object entity : jsonArray) {
+                JSONObject object = (JSONObject) entity;
+                if (object.getString("id").equals(node.getNodeId())) {
+                    if (object.containsKey("tpv_treenuser")) {
+                        JSONObject userObject = object.getObject("tpv_treenuser", JSONObject.class);
+                        if (userObject.containsKey("name")) {
+                            JSONObject nameObject = userObject.getObject("name", JSONObject.class);
+                            if (nameObject.containsKey("zh_CN")) {
+                                node.setTitle(nameObject.getString("zh_CN"));
+                            } else {
+                                node.setTitle("user name not found");
+                            }
+                        } else {
+                            node.setTitle("user name not found");
+                        }
+                    } else {
+                        node.setTitle("user name not found");
+                    }
+                    if (object.containsKey("tpv_treendata")) {
+                        node.setSubTitle(object.get("tpv_treendata").toString());
+                    } else {
+                        node.setSubTitle("data not found");
+                    }
+                    if (object.containsKey("tpv_treentext")) {
+                        node.setInfo1(object.get("tpv_treentext").toString());
+                    } else {
+                        node.setInfo1("text not found");
+                    }
+                    if (object.containsKey("tpv_treenint")) {
+                        node.setInfo2(object.get("tpv_treenint").toString());
+                    } else {
+                        node.setInfo2("int not found");
+                    }
+                    if (object.containsKey("seq")) {
+                        node.setInfo3(object.get("seq").toString());
+                    } else {
+                        node.setInfo3("seq not found");
+                    }
+                }
+            }
+        }
         return nodeList;
     }
 
@@ -65,7 +97,6 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                     node.setTargetNodeId(getChildNodeIds(entity, id));
                 }
 
-                // Calculate the level of the node
                 int level = calculateLevel(entity, id);
                 node.setLevel(level);
 
