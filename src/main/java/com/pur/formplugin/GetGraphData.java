@@ -1,5 +1,7 @@
 package com.pur.formplugin;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.pur.model.FlowNodeModel;
 import kd.bos.bill.AbstractBillPlugIn;
 import kd.bos.workflow.design.plugin.IWorkflowDesigner;
@@ -7,15 +9,117 @@ import kd.bos.workflow.design.plugin.IWorkflowDesigner;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigner
 {
+
+
+    public List<FlowNodeModel> entityToNodeList(JSONArray entity)
+    {
+        List<FlowNodeModel> nodeList = new ArrayList<>();
+        createFlowNodeModels(entity, "0", nodeList);
+        return nodeList;
+    }
+
+    private void createFlowNodeModels(JSONArray entity, String parentId, List<FlowNodeModel> nodeList)
+    {
+        for (int i = 0; i < entity.size(); i++) {
+            JSONObject jsonObject = entity.getJSONObject(i);
+            String id = jsonObject.getString("id");
+            String pid = "";
+            if (jsonObject.get("pid") != null) {
+                pid = jsonObject.getString("pid");
+            } else {
+                pid = "0";
+            }
+            if (pid.equals(String.valueOf(parentId))) {
+                FlowNodeModel node = new FlowNodeModel();
+                node.setNodeId(id);
+
+                if (hasChildNodes(entity, id)) {
+                    node.setSourceNodeId(id);
+                    node.setTargetNodeId(getChildNodeIds(entity, id));
+                }
+
+                // Calculate the level of the node
+                int level = calculateLevel(entity, id);
+                node.setLevel(level);
+
+                nodeList.add(node);
+
+                // Recursively process child nodes
+                createFlowNodeModels(entity, id, nodeList);
+            }
+        }
+    }
+
+    private boolean hasChildNodes(JSONArray entity, String id)
+    {
+        for (int i = 0; i < entity.size(); i++) {
+            JSONObject jsonObject = entity.getJSONObject(i);
+            String pid = "";
+            if (jsonObject.get("pid") != null) {
+                pid = jsonObject.getString("pid");
+            } else {
+                pid = "0";
+            }
+            if (pid.equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getChildNodeIds(JSONArray entity, String id)
+    {
+        List<String> childIds = new ArrayList<>();
+        for (int i = 0; i < entity.size(); i++) {
+            JSONObject jsonObject = entity.getJSONObject(i);
+            String pid = "";
+            if (jsonObject.get("pid") != null) {
+                pid = jsonObject.getString("pid");
+            } else {
+                pid = "0";
+            }
+            if (pid.equals(id)) {
+                String childId = jsonObject.getString("id");
+                childIds.add(childId);
+            }
+        }
+        return childIds;
+    }
+
+    private int calculateLevel(JSONArray entity, String id)
+    {
+        int level = 0;
+        String parentId = id;
+        while (!parentId.equals("0")) {
+            for (int i = 0; i < entity.size(); i++) {
+                JSONObject jsonObject = entity.getJSONObject(i);
+                String idValue = jsonObject.getString("id");
+                String pid = "";
+                if (jsonObject.get("pid") != null) {
+                    pid = jsonObject.getString("pid");
+                } else {
+                    pid = "0";
+                }
+                if (idValue.equals(parentId)) {
+                    parentId = pid;
+                    level++;
+                    break;
+                }
+            }
+        }
+        return level;
+    }
+
+
     @Override
     public Map<String, Object> getDesignerInitData(Map<String, Object> map)
     {
+
+
         List<FlowNodeModel> nodelList = new ArrayList<>();
         List<String> targetList = new ArrayList<>();
         targetList.add("nodeId-2");
@@ -28,9 +132,33 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         nodelList.add(new FlowNodeModel("nodeId-3", "node3Title", "node3SubTitle", "info1", "info2", "info3", "nodeId-1", null, 2));
         nodelList.add(new FlowNodeModel("nodeId-4", "node4Title", "node4SubTitle", "info1", "info2", "info3", "nodeId-1", null, 2));
         nodelList.add(new FlowNodeModel("nodeId-5", "node5Title", "node5SubTitle", "info1", "info2", "info3", "nodeId-2", null, 3));
-        List<FlowNodeModel> flowNodeModels = calcPosition(nodelList);
+//        List<FlowNodeModel> flowNodeModels = calcPosition(nodelList);
+//        List<FlowNodeModel> flowNodeModels = calcPosition(this.nodeList);
+//        System.out.println("this.nodeList = " + this.nodeList);
+//        String genXml = convertNodeToXml(nodelList);
+////        String xml = readFileToString("D:/Code/bos/src/main/java/com/pur/xml/fourNode.xml");
+//        System.out.println("genXml = " + genXml);
+//        map.put("graph_xml", genXml);
+
+        JSONArray entity = this.getView().getFormShowParameter().getCustomParam("entity");
+        List<FlowNodeModel> nodeList = entityToNodeList(entity);
+        for (FlowNodeModel flowNodeModel : nodeList) {
+            for (Object object : entity) {
+                JSONObject jsonObject = (JSONObject) object;
+                if (jsonObject.getString("id").equals(flowNodeModel.getNodeId())) {
+                    flowNodeModel.setTitle("title");
+                    flowNodeModel.setSubTitle("subtitle");
+                    flowNodeModel.setInfo1("name");
+                    flowNodeModel.setInfo2("department");
+                    flowNodeModel.setInfo3("status");
+                }
+            }
+        }
+        List<FlowNodeModel> flowNodeModels = calcPosition(nodeList);
+        System.out.println("this.nodeList = " + nodeList);
         String genXml = convertNodeToXml(flowNodeModels);
 //        String xml = readFileToString("D:/Code/bos/src/main/java/com/pur/xml/fourNode.xml");
+        System.out.println("genXml = " + genXml);
         map.put("graph_xml", genXml);
         return map;
     }

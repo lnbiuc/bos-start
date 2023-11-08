@@ -152,4 +152,22 @@ public class FlowNodeModel
     {
         this.level = level;
     }
+
+    @Override
+    public String toString()
+    {
+        return "FlowNodeModel{" +
+                "nodeId='" + nodeId + '\'' +
+                ", title='" + title + '\'' +
+                ", subTitle='" + subTitle + '\'' +
+                ", info1='" + info1 + '\'' +
+                ", info2='" + info2 + '\'' +
+                ", info3='" + info3 + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", sourceNodeId='" + sourceNodeId + '\'' +
+                ", targetNodeId=" + targetNodeId +
+                ", level=" + level +
+                '}';
+    }
 }
