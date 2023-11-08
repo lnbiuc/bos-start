@@ -21,12 +21,16 @@ public class ShowGraph extends AbstractBillPlugIn
             FormShowParameter parameter = new FormShowParameter();
             parameter.setFormId("tpv_app_showgraph");
             DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeety");
-            parameter.setClientParam(ViewFlowchartConstant.PROCINSTID, treeData);
-            parameter.getOpenStyle().setShowType(ShowType.MainNewTabPage);
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("entity", treeData);
-            parameter.setCustomParams(map);
-            this.getView().showForm(parameter);
+            if (treeData != null && !treeData.isEmpty()) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("entity", treeData);
+                parameter.setCustomParams(map);
+                parameter.setClientParam(ViewFlowchartConstant.PROCINSTID, treeData);
+                parameter.getOpenStyle().setShowType(ShowType.MainNewTabPage);
+                this.getView().showForm(parameter);
+            } else {
+                this.getView().showTipNotification("树形单据体内容不能为空");
+            }
         }
     }
 }

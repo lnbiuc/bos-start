@@ -6,14 +6,36 @@ import com.pur.model.FlowNodeModel;
 import kd.bos.bill.AbstractBillPlugIn;
 import kd.bos.workflow.design.plugin.IWorkflowDesigner;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigner
 {
 
+    @Override
+    public Map<String, Object> getDesignerInitData(Map<String, Object> map)
+    {
+        // 获取树形单据体数据
+        JSONArray treeEntity = this.getView().getFormShowParameter().getCustomParam("entity");
+        List<FlowNodeModel> nodeList = entityToNodeList(treeEntity);
+        for (FlowNodeModel node : nodeList) {
+            for (Object entity : treeEntity) {
+                JSONObject entityObject = (JSONObject) entity;
+                if (entityObject.getString("id").equals(node.getNodeId())) {
+                    node.setTitle("title");
+                    node.setSubTitle("subtitle");
+                    node.setInfo1("name");
+                    node.setInfo2("department");
+                    node.setInfo3("status");
+                }
+            }
+        }
+        List<FlowNodeModel> nodeModels = calcPosition(nodeList);
+        String genXml = convertNodeToXml(nodeModels);
+        map.put("graph_xml", genXml);
+        return map;
+    }
 
     public List<FlowNodeModel> entityToNodeList(JSONArray entity)
     {
@@ -22,12 +44,13 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         return nodeList;
     }
 
+
     private void createFlowNodeModels(JSONArray entity, String parentId, List<FlowNodeModel> nodeList)
     {
         for (int i = 0; i < entity.size(); i++) {
             JSONObject jsonObject = entity.getJSONObject(i);
             String id = jsonObject.getString("id");
-            String pid = "";
+            String pid;
             if (jsonObject.get("pid") != null) {
                 pid = jsonObject.getString("pid");
             } else {
@@ -58,7 +81,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     {
         for (int i = 0; i < entity.size(); i++) {
             JSONObject jsonObject = entity.getJSONObject(i);
-            String pid = "";
+            String pid;
             if (jsonObject.get("pid") != null) {
                 pid = jsonObject.getString("pid");
             } else {
@@ -76,7 +99,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         List<String> childIds = new ArrayList<>();
         for (int i = 0; i < entity.size(); i++) {
             JSONObject jsonObject = entity.getJSONObject(i);
-            String pid = "";
+            String pid;
             if (jsonObject.get("pid") != null) {
                 pid = jsonObject.getString("pid");
             } else {
@@ -98,7 +121,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
             for (int i = 0; i < entity.size(); i++) {
                 JSONObject jsonObject = entity.getJSONObject(i);
                 String idValue = jsonObject.getString("id");
-                String pid = "";
+                String pid;
                 if (jsonObject.get("pid") != null) {
                     pid = jsonObject.getString("pid");
                 } else {
@@ -112,55 +135,6 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
             }
         }
         return level;
-    }
-
-
-    @Override
-    public Map<String, Object> getDesignerInitData(Map<String, Object> map)
-    {
-
-
-        List<FlowNodeModel> nodelList = new ArrayList<>();
-        List<String> targetList = new ArrayList<>();
-        targetList.add("nodeId-2");
-        targetList.add("nodeId-3");
-        targetList.add("nodeId-4");
-        List<String> targetList2 = new ArrayList<>();
-        targetList2.add("nodeId-5");
-        nodelList.add(new FlowNodeModel("nodeId-1", "node1Title", "node1SubTitle", "info1", "info2", "info3", null, targetList, 1));
-        nodelList.add(new FlowNodeModel("nodeId-2", "node2Title", "node2SubTitle", "info1", "info2", "info3", "nodeId-1", targetList2, 2));
-        nodelList.add(new FlowNodeModel("nodeId-3", "node3Title", "node3SubTitle", "info1", "info2", "info3", "nodeId-1", null, 2));
-        nodelList.add(new FlowNodeModel("nodeId-4", "node4Title", "node4SubTitle", "info1", "info2", "info3", "nodeId-1", null, 2));
-        nodelList.add(new FlowNodeModel("nodeId-5", "node5Title", "node5SubTitle", "info1", "info2", "info3", "nodeId-2", null, 3));
-//        List<FlowNodeModel> flowNodeModels = calcPosition(nodelList);
-//        List<FlowNodeModel> flowNodeModels = calcPosition(this.nodeList);
-//        System.out.println("this.nodeList = " + this.nodeList);
-//        String genXml = convertNodeToXml(nodelList);
-////        String xml = readFileToString("D:/Code/bos/src/main/java/com/pur/xml/fourNode.xml");
-//        System.out.println("genXml = " + genXml);
-//        map.put("graph_xml", genXml);
-
-        JSONArray entity = this.getView().getFormShowParameter().getCustomParam("entity");
-        List<FlowNodeModel> nodeList = entityToNodeList(entity);
-        for (FlowNodeModel flowNodeModel : nodeList) {
-            for (Object object : entity) {
-                JSONObject jsonObject = (JSONObject) object;
-                if (jsonObject.getString("id").equals(flowNodeModel.getNodeId())) {
-                    flowNodeModel.setTitle("title");
-                    flowNodeModel.setSubTitle("subtitle");
-                    flowNodeModel.setInfo1("name");
-                    flowNodeModel.setInfo2("department");
-                    flowNodeModel.setInfo3("status");
-                }
-            }
-        }
-        List<FlowNodeModel> flowNodeModels = calcPosition(nodeList);
-        System.out.println("this.nodeList = " + nodeList);
-        String genXml = convertNodeToXml(flowNodeModels);
-//        String xml = readFileToString("D:/Code/bos/src/main/java/com/pur/xml/fourNode.xml");
-        System.out.println("genXml = " + genXml);
-        map.put("graph_xml", genXml);
-        return map;
     }
 
     private String convertNodeToXml(List<FlowNodeModel> nodeList)
@@ -221,7 +195,6 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
             int level = node.getLevel();
 
             if (level > currentLevel) {
-                // 进入下一层，重置 x 和 y
                 currentLevel = level;
                 currentX += 300;
                 currentY = 0;
@@ -234,30 +207,5 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         }
 
         return nodeList;
-    }
-
-
-    private int getNextLevelNode(List<FlowNodeModel> nodeList, int startLevel)
-    {
-        int nextLevel = Integer.MAX_VALUE;
-
-        for (FlowNodeModel node : nodeList) {
-            int level = node.getLevel();
-            if (level > startLevel && level < nextLevel) {
-                nextLevel = level;
-            }
-        }
-
-        return nextLevel;
-    }
-
-    public static String readFileToString(String filePath)
-    {
-        try {
-            byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-            return new String(bytes);
-        } catch (IOException e) {
-            return null;
-        }
     }
 }
