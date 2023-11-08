@@ -11,15 +11,18 @@ import java.nio.file.Paths;
  * cosmic服务启动器，含默认配置，如需更改请在Application中设置。
  */
 @SdkPublic
-public final class Launcher {
+public final class Launcher
+{
 
     private boolean setConfigUrl = false;
 
-    public Launcher() {
+    public Launcher()
+    {
         setDefault();
     }
 
-    private void setDefault() {
+    private void setDefault()
+    {
         set("configAppName", "mservice,web");
         set("webmserviceinone", "true");
         set("file.encoding", "utf-8");
@@ -35,7 +38,7 @@ public final class Launcher {
         set("tenant.code.type", "config");
         set("JETTY_WEB_PORT", "8080");
         set("domain.contextUrl", "http://localhost:8080/ierp");
-		set("lightweightdeploy", "true");
+        set("lightweightdeploy", "true");
         set("redismodelcache.enablelua", "false");
         set("lightweightdeploy.services", "");
 
@@ -54,22 +57,26 @@ public final class Launcher {
         setSqlOut(true, true);
     }
 
-    public void start() {
+    public void start()
+    {
         JettyServer.main(null);
     }
 
-    public void set(String key, String value) {
+    public void set(String key, String value)
+    {
         System.setProperty(key, value);
     }
 
-    public String get(String key) {
+    public String get(String key)
+    {
         return System.getProperty(key);
     }
 
     /**
      * 设置苍穹服务器IP地址
      */
-    public void setServerIP(String ip) {
+    public void setServerIP(String ip)
+    {
         setMCServerUrl("http://" + ip + ":8090");
         if (!setConfigUrl) {
             setConfigUrl(ip + ":2181");
@@ -83,14 +90,16 @@ public final class Launcher {
      *
      * @param mcServerUrl
      */
-    public void setMCServerUrl(String mcServerUrl) {
+    public void setMCServerUrl(String mcServerUrl)
+    {
         set("mc.server.url", mcServerUrl);
     }
 
     /**
      * @param configUrl 配置服务地址
      */
-    public void setConfigUrl(String configUrl) {
+    public void setConfigUrl(String configUrl)
+    {
         set(ConfigUtils.CONFIG_URL_KEY, configUrl);
         setConfigUrl = true;
     }
@@ -102,7 +111,8 @@ public final class Launcher {
      * @param user          用户
      * @param password      密码
      */
-    public void setConfigUrl(String connectString, String user, String password) {
+    public void setConfigUrl(String connectString, String user, String password)
+    {
         if (user != null && password != null) {
             setConfigUrl(connectString + "?user=" + user + "&password=" + password);
         } else {
@@ -113,7 +123,8 @@ public final class Launcher {
     /**
      * @param clusterNumber 集群编码
      */
-    public void setClusterNumber(String clusterNumber) {
+    public void setClusterNumber(String clusterNumber)
+    {
         set(ConfigUtils.CLUSTER_NAME_KEY, clusterNumber);
     }
 
@@ -121,46 +132,53 @@ public final class Launcher {
     /**
      * @param appName 本节点服务名称
      */
-    public void setAppName(String appName) {
+    public void setAppName(String appName)
+    {
         setAppName(appName, true);
     }
 
-    public void setAppName(String appName, boolean alsoSetQueueTag) {
+    public void setAppName(String appName, boolean alsoSetQueueTag)
+    {
         set(ConfigUtils.APP_NAME_KEY, appName);
         if (alsoSetQueueTag) {
             setQueueTag(appName);
         }
     }
 
-    public void setStartWithQing(boolean b) {
+    public void setStartWithQing(boolean b)
+    {
         set("bos.app.special.deployalone.ids", b ? " " : "qing");
     }
 
     /**
      * @param tenantNumber 租户编码
      */
-    public void setTenantNumber(String tenantNumber) {
+    public void setTenantNumber(String tenantNumber)
+    {
         set("domain.tenantCode", tenantNumber);
     }
 
     /**
      * @param enable 是否开启水平分表服务
      */
-    public void setXdbEnable(boolean enable) {
+    public void setXdbEnable(boolean enable)
+    {
         set("xdb.enable", String.valueOf(enable));
     }
 
     /**
      * @param tag 队列标记
      */
-    public void setQueueTag(String tag) {
+    public void setQueueTag(String tag)
+    {
         set("mq.debug.queue.tag", tag);
     }
 
     /**
      * @param path web路徑
      */
-    public void setWebPath(String path) {
+    public void setWebPath(String path)
+    {
         set("JETTY_WEBRES_PATH", path);
     }
 
@@ -170,7 +188,8 @@ public final class Launcher {
      * @param outSQL        是否输出SQL
      * @param withParameter 是否输出参数
      */
-    public void setSqlOut(boolean outSQL, boolean withParameter) {
+    public void setSqlOut(boolean outSQL, boolean withParameter)
+    {
         set("db.sql.out", String.valueOf(outSQL));
         set("db.sql.out.withParameter", String.valueOf(withParameter));
     }

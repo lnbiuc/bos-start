@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel grid="0">
+    <root>
+        <mxCell id="node_0"/>
+        <mxCell id="node_1" type="Diagram" group="ProcessControl" parent="node_0">
+            <Object process_id="bill_circulaterelation" as="properties"/>
+        </mxCell>
+        <mxCell id="nodeId-1" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="0" y="0" as="geometry"/>
+            <Object as="properties"
+                    title="node1Title"
+                    subtitle="node1SubTitle"
+                    name="info1"
+                    department="info2"
+                    status="info3"
+            />
+        </mxCell>
+        <mxCell id="node_line_nodeId-1"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#000000!important;;"
+                type="SequenceFlow"
+                parent="node_1"
+                edge="1"
+                source="nodeId-1"
+                target="nodeId-2">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_line_nodeId-1"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#000000!important;;"
+                type="SequenceFlow"
+                parent="node_1"
+                edge="1"
+                source="nodeId-1"
+                target="nodeId-3">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="node_line_nodeId-1"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#000000!important;;"
+                type="SequenceFlow"
+                parent="node_1"
+                edge="1"
+                source="nodeId-1"
+                target="nodeId-4">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="nodeId-2" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="300" y="0" as="geometry"/>
+            <Object as="properties"
+                    title="node2Title"
+                    subtitle="node2SubTitle"
+                    name="info1"
+                    department="info2"
+                    status="info3"
+            />
+        </mxCell>
+        <mxCell id="nodeId-3" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="300" y="200" as="geometry"/>
+            <Object as="properties"
+                    title="node3Title"
+                    subtitle="node3SubTitle"
+                    name="info1"
+                    department="info2"
+                    status="info3"
+            />
+        </mxCell>
+        <mxCell id="nodeId-4" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="300" y="400" as="geometry"/>
+            <Object as="properties"
+                    title="node4Title"
+                    subtitle="node4SubTitle"
+                    name="info1"
+                    department="info2"
+                    status="info3"
+            />
+        </mxCell>
+    </root>
+</mxGraphModel>

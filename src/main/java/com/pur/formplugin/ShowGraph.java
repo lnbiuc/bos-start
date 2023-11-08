@@ -21,14 +21,16 @@ public class ShowGraph extends AbstractBillPlugIn
             DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeety");
             parameter.setClientParam(ViewFlowchartConstant.PROCINSTID, treeData);
             parameter.getOpenStyle().setShowType(ShowType.MainNewTabPage);
+            parameter.setCustomParam("id", this.getModel().getDataEntity(true).getPkValue());
+            parameter.setCustomParam("entityId", this.getView().getEntityId());
             this.getView().showForm(parameter);
             // 获取树型单据体数据
-            DynamicObjectCollection tree = this.getModel().getEntryEntity("tpv_treeety");
-            tree.forEach(t ->
-            {
-
-                System.out.println(t);
-            });
+//            DynamicObjectCollection tree = this.getModel().getEntryEntity("tpv_treeety");
+//            tree.forEach(t ->
+//            {
+//
+//                System.out.println(t);
+//            });
             //
         }
     }

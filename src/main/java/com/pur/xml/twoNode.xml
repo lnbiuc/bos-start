@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel grid="0">
+    <root>
+        <mxCell id="node_0"/>
+        <mxCell id="node_1" type="Diagram" group="ProcessControl" parent="node_0">
+            <Object process_id="bill_circulaterelation" as="properties"/>
+        </mxCell>
+        <mxCell id="bill_circulaterelation_billCard_1" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="157.0" y="518.0" as="geometry"/>
+            <Object as="properties" entityName="采购申请" subtitle="APPLY-231106-0010" entityNumber="tpv_app_proc_req"
+                    businessKey="1812376428591713280" name="" title="采购申请" department=""
+                    activityInstId="1812376431510947840" status=""/>
+        </mxCell>
+        <mxCell id="bill_circulaterelation_billCard_1_child" parent="bill_circulaterelation_billCard_1" vertex="1"
+                style="shape=ierp.billrelation.Location;">
+            <mxGeometry width="32.0" height="32.0" x="0.0" y="0.0" relative="true" as="geometry">
+                <mxPoint x="-16.0" y="-16.0" as="offset"/>
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="bill_circulaterelation_billCard_2" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;"
+                type="billCard" parent="node_1" vertex="1" showRecords="false">
+            <mxGeometry width="216.0" height="132.0" x="453.0" y="518.0" as="geometry"/>
+            <Object as="properties" entityName="采购订单" subtitle="ORDER-231106-0011" entityNumber="tpv_app_proc_order"
+                    businessKey="1812376827520355328" name="" title="采购订单" department="" status=""/>
+        </mxCell>
+
+
+        <mxCell id="bill_circulaterelation_SequenceFlow3"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="bill_circulaterelation_billCard_1"
+                target="bill_circulaterelation_billCard_2">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="bill_circulaterelation_SequenceFlow3_child" parent="bill_circulaterelation_SequenceFlow3" vertex="1"
+                style="shape=ierp.billrelation.IconComplete;">
+            <Object entityNumber="tpv_app_proc_req" businessKey="1812376428591713280" type="complete" title="下推已完成"
+                    as="properties"/>
+            <mxGeometry width="24.0" height="24.0" x="0.0" y="0.0" relative="true" as="geometry">
+                <mxPoint x="-32.0" y="-12.0" as="offset"/>
+            </mxGeometry>
+        </mxCell>
+    </root>
+</mxGraphModel>
