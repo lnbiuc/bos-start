@@ -3,6 +3,8 @@ package com.pur.formplugin;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pur.model.FlowNodeModel;
+import com.pur.model.Relation;
+import com.pur.utils.ConnectGraphUtil;
 import kd.bos.bill.AbstractBillPlugIn;
 import kd.bos.workflow.design.plugin.IWorkflowDesigner;
 
@@ -18,12 +20,113 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     {
         // 获取树形单据体数据
         JSONArray treeEntity = this.getView().getFormShowParameter().getCustomParam("entity");
-        List<FlowNodeModel> nodeList = entityToNodeList(treeEntity);
 
-        List<FlowNodeModel> nodeModels = calcPosition(nodeList);
-        String genXml = convertNodeToXml(nodeModels);
-        map.put("graph_xml", genXml);
+//        List<FlowNodeModel> nodeList = entityToNodeList(treeEntity);
+
+//        List<FlowNodeModel> nodeModels = calcPosition(nodeList);
+//        String genXml = convertNodeToXml(nodeModels);
+//
+//        map.put("graph_xml", genXml);
+        ;
+        List<Relation> relations = convert(treeEntity);
+        ConnectGraphUtil.createRelation(relations);
+        System.out.println("============convert(treeEntity) = " + JSONObject.toJSONString(convert(treeEntity)));
+        StringBuilder relationXml = new StringBuilder();
+        String xml = spliceXml(relations, relationXml);
+        map.put("graph_xml", xml);
         return map;
+    }
+
+    private String spliceXml(List<Relation> relations, StringBuilder xml)
+    {
+        for (Relation relation : relations) {
+            xml.append(spliceModel(relation));
+            if (relation.getParentId() != null && relation.getParentId() != 0) {
+                xml.append(spliceLine(relation));
+            }
+            List<Relation> targets = relation.getTargets();
+            if (!targets.isEmpty()) {
+                spliceXml(targets, xml);
+            }
+        }
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<mxGraphModel grid=\"0\">" +
+                "    <root>" +
+                "        <mxCell id=\"node_0\"/>" +
+                "        <mxCell id=\"node_1\" type=\"Diagram\" group=\"ProcessControl\" parent=\"node_0\">" +
+                "            <Object process_id=\"bill_circulaterelation\" as=\"properties\"/>" +
+                "        </mxCell>" +
+                xml.toString() +
+                "</root>" +
+                "</mxGraphModel>";
+    }
+
+    private String spliceLine(Relation relation)
+    {
+        return "<mxCell id=\"node_line_" + relation.getId() + "\"" +
+                "        style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeColor=#A1CFFF!important;;\"" +
+                "        type=\"SequenceFlow\" " +
+                "        parent=\"node_1\" " +
+                "        edge=\"1\" " +
+                "        source=\"" + relation.getParentId() + "\"" +
+                "        target=\"" + relation.getId() + "\">" +
+                "    <mxGeometry relative=\"1\" as=\"geometry\"/>" +
+                "</mxCell>";
+    }
+
+    private String spliceModel(Relation relation)
+    {
+        String style = "shape=billCard";
+        return "<mxCell id=\"" + relation.getId() + "\"" +
+                " value=\"" + "\"" +
+                " style=\"" + style + ";whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0\"" +
+                " type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\" clickable=\"true\">" +
+                "<mxGeometry width=\"" + relation.getWidth() + "\"" +
+                " height=\"" + relation.getHeight() + "\"" +
+                " x=\"" + relation.getX() + "\"" +
+                " y=\"" + relation.getY() + "\" as=\"geometry\"/>" +
+                "<Object as=\"properties\"" +
+                "        title=\"" + relation.getTitle() + "\"" +
+                "        subtitle=\"" + relation.getTitle() + "\"" +
+                "        name=\"" + relation.getTitle() + "\"" +
+                "        department=\"" + relation.getTitle() + "\"" +
+                "        status=\"" + relation.getTitle() + "\"" +
+                "        />" +
+                "</mxCell>";
+    }
+
+    public static List<Relation> convert(JSONArray array)
+    {
+        List<Relation> relations = new ArrayList<>();
+
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject obj = array.getJSONObject(i);
+
+            Relation relation = new Relation();
+            relation.setId(obj.getLong("id"));
+            relation.setTitle(obj.getString("tpv_treentext"));
+            relation.setParentId(obj.getLong("pid"));
+            relation.setTargets(new ArrayList<>());
+            relation.setVirtual(false);
+            relation.setHeight(132);
+            relation.setWidth(216);
+
+            relations.add(relation);
+        }
+
+        // 建立父子关系
+        for (Relation relation : relations) {
+            long parentId = relation.getParentId();
+            if (parentId != 0) {
+                for (Relation parent : relations) {
+                    if (parent.getId() == parentId) {
+                        parent.getTargets().add(relation);
+                        break;
+                    }
+                }
+            }
+        }
+        return relations;
     }
 
     public List<FlowNodeModel> entityToNodeList(JSONArray jsonArray)
@@ -172,45 +275,45 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         StringBuilder xml = new StringBuilder();
         // start
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        xml.append("<mxGraphModel grid=\"0\">\n" +
-                "    <root>\n" +
-                "        <mxCell id=\"node_0\"/>\n" +
-                "        <mxCell id=\"node_1\" type=\"Diagram\" group=\"ProcessControl\" parent=\"node_0\">\n" +
-                "            <Object process_id=\"bill_circulaterelation\" as=\"properties\"/>\n" +
+        xml.append("<mxGraphModel grid=\"0\">" +
+                "    <root>" +
+                "        <mxCell id=\"node_0\"/>" +
+                "        <mxCell id=\"node_1\" type=\"Diagram\" group=\"ProcessControl\" parent=\"node_0\">" +
+                "            <Object process_id=\"bill_circulaterelation\" as=\"properties\"/>" +
                 "        </mxCell>");
 
         nodeList.forEach(node ->
         {
-            xml.append("<mxCell id=\"" + node.getNodeId() + "\" value=\"\"\n" +
-                    "                style=\"shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;\"\n" +
-                    "                type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\">\n" +
-                    "            <mxGeometry width=\"216.0\" height=\"132.0\" " + "x=\"" + node.getX() + "\" " + "y=\"" + node.getY() + "\" as=\"geometry\"/>\n" +
-                    "            <Object as=\"properties\"\n" +
-                    "                    title=\"" + node.getTitle() + "\"\n" +
-                    "                    subtitle=\"" + node.getSubTitle() + "\"\n" +
-                    "                    name=\"" + node.getInfo1() + "\"\n" +
-                    "                    department=\"" + node.getInfo2() + "\"\n" +
-                    "                    status=\"" + node.getInfo3() + "\"\n" +
-                    "                    />\n" +
+            xml.append("<mxCell id=\"" + node.getNodeId() + "\" value=\"\"" +
+                    "                style=\"shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0;\"" +
+                    "                type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\">" +
+                    "            <mxGeometry width=\"216.0\" height=\"132.0\" " + "x=\"" + node.getX() + "\" " + "y=\"" + node.getY() + "\" as=\"geometry\"/>" +
+                    "            <Object as=\"properties\"" +
+                    "                    title=\"" + node.getTitle() + "\"" +
+                    "                    subtitle=\"" + node.getSubTitle() + "\"" +
+                    "                    name=\"" + node.getInfo1() + "\"" +
+                    "                    department=\"" + node.getInfo2() + "\"" +
+                    "                    status=\"" + node.getInfo3() + "\"" +
+                    "                    />" +
                     "        </mxCell>");
             if (node.getTargetNodeId() != null && !node.getTargetNodeId().isEmpty()) {
                 for (int i = 0; i < node.getTargetNodeId().size(); i++) {
                     xml.append(
-                            "<mxCell id=\"node_line_" + node.getNodeId() + i + "\"\n" +
-                                    "                style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;\"\n" +
-                                    "                type=\"SequenceFlow\" \n" +
-                                    "                parent=\"node_1\" \n" +
-                                    "                edge=\"1\" \n" +
-                                    "                source=\"" + node.getNodeId() + "\"\n" +
-                                    "                target=\"" + node.getTargetNodeId().get(i) + "\">\n" +
-                                    "            <mxGeometry relative=\"1\" as=\"geometry\"/>\n" +
+                            "<mxCell id=\"node_line_" + node.getNodeId() + i + "\"" +
+                                    "                style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;\"" +
+                                    "                type=\"SequenceFlow\" " +
+                                    "                parent=\"node_1\" " +
+                                    "                edge=\"1\" " +
+                                    "                source=\"" + node.getNodeId() + "\"" +
+                                    "                target=\"" + node.getTargetNodeId().get(i) + "\">" +
+                                    "            <mxGeometry relative=\"1\" as=\"geometry\"/>" +
                                     "        </mxCell>");
                 }
             }
         });
 
         // end
-        xml.append("</root>\n" +
+        xml.append("</root>" +
                 "</mxGraphModel>");
         return xml.toString();
     }

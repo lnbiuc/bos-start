@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel grid="0">
+    <root>
+        <mxCell id="node_0"/>
+        <mxCell id="node_1" type="Diagram" group="ProcessControl" parent="node_0">
+            <Object process_id="bill_circulaterelation" as="properties"/>
+        </mxCell>
+        <mxCell id="1814586372397203456" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-320" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="1814586388973093888" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-170" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="node_line_1814586388973093888"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="1814586372397203456" target="1814586388973093888">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="1814586392806686720" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-20" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="node_line_1814586392806686720"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="1814586388973093888" target="1814586392806686720">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="1814586388973093888" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-170" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="node_line_1814586388973093888"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="1814586372397203456" target="1814586388973093888">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="1814586392806686720" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-20" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="node_line_1814586392806686720"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="1814586388973093888" target="1814586392806686720">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="1814586392806686720" value=""
+                style="shape=billCard;whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0"
+                type="billCard" parent="node_1" vertex="1" showRecords="false" clickable="true">
+            <mxGeometry width="216" height="132" x="-358" y="-20" as="geometry"/>
+            <Object as="properties" title="" subtitle="" name="" department="" status=""/>
+        </mxCell>
+        <mxCell id="node_line_1814586392806686720"
+                style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;entryX=0;entryY=0.5;strokeColor=#A1CFFF!important;;"
+                type="SequenceFlow" parent="node_1" edge="1" source="1814586388973093888" target="1814586392806686720">
+            <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+    </root>
+</mxGraphModel>
