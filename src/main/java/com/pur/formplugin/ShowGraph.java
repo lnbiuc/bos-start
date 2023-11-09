@@ -20,7 +20,7 @@ public class ShowGraph extends AbstractBillPlugIn
         if (StringUtils.equals("tpv_showgraph", key)) {
             FormShowParameter parameter = new FormShowParameter();
             parameter.setFormId("tpv_app_showgraph");
-            DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeety");
+            DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeentryentity");
             if (treeData != null && !treeData.isEmpty()) {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("entity", treeData);

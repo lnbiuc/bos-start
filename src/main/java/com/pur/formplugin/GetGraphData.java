@@ -145,8 +145,8 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                     relation.setTitle("user name not found");
                 }
             }
-            if (obj.containsKey("tpv_treendata")) {
-                relation.setSubTitle(obj.getString("tpv_treendata"));
+            if (obj.containsKey("tpv_treendate")) {
+                relation.setSubTitle(obj.getString("tpv_treendate"));
             } else {
                 relation.setSubTitle("");
             }
