@@ -30,7 +30,6 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     {
         List<FlowNodeModel> nodeList = new ArrayList<>();
         createFlowNodeModels(jsonArray, "0", nodeList);
-        System.out.println("JSONObject.toJSONString(nodeList) = " + JSONObject.toJSONString(nodeList));
         for (FlowNodeModel node : nodeList) {
             for (Object entity : jsonArray) {
                 JSONObject object = (JSONObject) entity;
@@ -221,11 +220,16 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         int currentX = 0;
         int currentY = 0;
         int currentLevel = 1;
+        int initialX = 0;
 
         for (FlowNodeModel node : nodeList) {
             int level = node.getLevel();
 
-            if (level > currentLevel) {
+            if (level == 1) {
+                // Reset x value to the initialX when level changes back to 1
+                currentX = initialX;
+
+            } else if (level > currentLevel) {
                 currentLevel = level;
                 currentX += 300;
                 currentY = 0;
@@ -236,7 +240,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
 
             currentY += 200;
         }
-
+        System.out.println("JSONObject.toJSONString(nodeList) = " + JSONObject.toJSONString(nodeList));
         return nodeList;
     }
 }
