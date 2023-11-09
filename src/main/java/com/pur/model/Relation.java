@@ -11,7 +11,7 @@ public class Relation implements Serializable
 
     private String title;
 
-    private String subString;
+    private String subTitle;
 
     private String text1;
 
@@ -57,14 +57,14 @@ public class Relation implements Serializable
         this.targets = targets;
     }
 
-    public String getSubString()
+    public String getSubTitle()
     {
-        return subString;
+        return subTitle;
     }
 
-    public void setSubString(String subString)
+    public void setSubTitle(String subTitle)
     {
-        this.subString = subString;
+        this.subTitle = subTitle;
     }
 
     public String getText1()

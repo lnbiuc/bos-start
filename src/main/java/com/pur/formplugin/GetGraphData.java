@@ -67,17 +67,21 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     private String spliceModel(Relation relation)
     {
         String style = "shape=billCard";
+        if (relation.getId() == 11111L) {
+            relation.setHeight(0);
+            relation.setWidth(0);
+        }
         return "<mxCell id=\"" + relation.getId() + "\"" +
                 " value=\"" + "\"" +
                 " style=\"" + style + ";whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0\"" +
-                " type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\" clickable=\"true\">" +
+                " type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\" clickable=\"false\">" +
                 "<mxGeometry width=\"" + relation.getWidth() + "\"" +
                 " height=\"" + relation.getHeight() + "\"" +
                 " x=\"" + relation.getX() + "\"" +
                 " y=\"" + relation.getY() + "\" as=\"geometry\"/>" +
                 "<Object as=\"properties\"" +
                 "        title=\"" + relation.getTitle() + "\"" +
-                "        subtitle=\"" + relation.getSubString() + "\"" +
+                "        subtitle=\"" + relation.getSubTitle() + "\"" +
                 "        name=\"" + relation.getText1() + "\"" +
                 "        department=\"" + relation.getText2() + "\"" +
                 "        status=\"" + relation.getText3() + "\"" +
@@ -112,13 +116,13 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                     relation.setTitle("user name not found");
                 }
             }
-            if (obj.containsKey("tpv_treentext")) {
-                relation.setSubString(obj.getString("tpv_treentext"));
-            } else {
-                relation.setSubString("");
-            }
             if (obj.containsKey("tpv_treendata")) {
-                relation.setText1(obj.get("tpv_treendata").toString());
+                relation.setSubTitle(obj.getString("tpv_treendata"));
+            } else {
+                relation.setSubTitle("");
+            }
+            if (obj.containsKey("tpv_treentext")) {
+                relation.setText1(obj.get("tpv_treentext").toString());
             } else {
                 relation.setText1("data not found");
             }
@@ -158,8 +162,8 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         Relation virtualRoot = new Relation();
         virtualRoot.setId(11111L);
         virtualRoot.setVirtual(true);
-        virtualRoot.setWidth(0);
-        virtualRoot.setHeight(0);
+        virtualRoot.setWidth(200);
+        virtualRoot.setHeight(150);
         ArrayList<Relation> rootNodeTarget = new ArrayList<>();
         for (Relation relation : relations) {
             if (relation.getParentId() == 0) {

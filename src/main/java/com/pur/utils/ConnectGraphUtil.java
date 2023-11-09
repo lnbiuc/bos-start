@@ -6,8 +6,7 @@ import com.pur.model.Relation;
 import java.util.List;
 
 /**
- * @className: ConnectGraphUtil
- * @description: 位置调整工具类
+ * 位置调整工具类
  */
 public class ConnectGraphUtil
 {
@@ -17,7 +16,7 @@ public class ConnectGraphUtil
     public static void createRelation(List<Relation> relations)
     {
 
-        Relation root = null;
+        Relation root;
         if (relations.size() == 1) {
             root = relations.get(0);
         } else {
@@ -31,10 +30,7 @@ public class ConnectGraphUtil
 
 
     /**
-     * 创建虚root节点root
-     *
-     * @param relations
-     * @return
+     * 创建虚root节点
      */
     private static Relation createRoot(List<Relation> relations)
     {
@@ -71,7 +67,7 @@ public class ConnectGraphUtil
         int y = parent.getY();
 
         int locX = x;
-        int locY = y + 200;
+        int locY = y + 250;
 
         int rightIndex = middle;
         Relation last = null;
@@ -142,9 +138,6 @@ public class ConnectGraphUtil
 
     /**
      * 计算整个节点(包括子节点)的宽度
-     *
-     * @param node
-     * @return
      */
     private static int getNodeWidth(Relation node)
     {
@@ -156,8 +149,7 @@ public class ConnectGraphUtil
             //偶数节点要按奇数个来算宽度
             leaves++;
         }
-        int width = leaves * 195 + (leaves - 1) * SPACE;
-        return width;
+        return leaves * 230 + (leaves - 1) * SPACE;
     }
 
     private static int getLeafElements(Relation node)
@@ -173,5 +165,4 @@ public class ConnectGraphUtil
         }
         return count;
     }
-
 }
