@@ -19,14 +19,24 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     {
         // 获取树形单据体数据
         JSONArray treeEntity = this.getView().getFormShowParameter().getCustomParam("entity");
+        // 转换为流程图数据
         List<Relation> relations = convert(treeEntity);
+        // 计算位置
         ConnectGraphUtil.createRelation(relations);
         StringBuilder relationXml = new StringBuilder();
+        // 拼接xml
         String xml = spliceXml(relations, relationXml);
         map.put("graph_xml", xml);
         return map;
     }
 
+    /**
+     * 拼接xml
+     *
+     * @param relations 流程图数据
+     * @param xml       xml
+     * @return xml
+     */
     private String spliceXml(List<Relation> relations, StringBuilder xml)
     {
         for (Relation relation : relations) {
@@ -51,6 +61,12 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                 "</mxGraphModel>";
     }
 
+    /**
+     * 拼接线
+     *
+     * @param relation 流程图数据
+     * @return 线
+     */
     private String spliceLine(Relation relation)
     {
         return "<mxCell id=\"node_line_" + relation.getId() + "\"" +
@@ -64,6 +80,12 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                 "</mxCell>";
     }
 
+    /**
+     * 拼接节点
+     *
+     * @param relation 流程图数据
+     * @return 节点
+     */
     private String spliceModel(Relation relation)
     {
         String style = "shape=billCard";
@@ -89,6 +111,12 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                 "</mxCell>";
     }
 
+    /**
+     * 转换为流程图数据
+     *
+     * @param array 树形单据体数据
+     * @return 流程图数据
+     */
     public static List<Relation> convert(JSONArray array)
     {
         List<Relation> relations = new ArrayList<>();
@@ -98,6 +126,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
             JSONObject obj = array.getJSONObject(i);
 
             Relation relation = new Relation();
+            // 如果为根节点，设置一个虚拟的父节点id
             if (obj.getLong("parentId") == null || obj.getLong("parentId") == 0) {
                 relation.setParentId(11111L);
             }
@@ -158,7 +187,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                 }
             }
         }
-
+        // 创建虚拟的根节点
         Relation virtualRoot = new Relation();
         virtualRoot.setId(11111L);
         virtualRoot.setVirtual(true);

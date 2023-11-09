@@ -6,7 +6,6 @@ import java.util.List;
 public class Relation implements Serializable
 {
 
-    // 单据id
     private Long id;
 
     private String title;
@@ -22,7 +21,7 @@ public class Relation implements Serializable
     // 父级id
     private Long parentId;
 
-    // 是否实际节点
+    // 是否虚拟节点
     private Boolean virtual;
 
     // 在设计器的横坐标
