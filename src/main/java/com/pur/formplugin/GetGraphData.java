@@ -67,7 +67,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     private String spliceModel(Relation relation)
     {
         String style = "shape=billCard";
-        if (relation.getId() == 11111L) {
+        if (relation.getVirtual()) {
             relation.setHeight(0);
             relation.setWidth(0);
         }
