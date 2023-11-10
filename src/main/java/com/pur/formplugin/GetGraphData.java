@@ -40,7 +40,9 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
     private String spliceXml(List<Relation> relations, StringBuilder xml)
     {
         for (Relation relation : relations) {
+            // 添加流程节点
             xml.append(spliceModel(relation));
+            // 如果有父子级关系，添加节点间连线
             if (relation.getParentId() != null && relation.getParentId() != 0) {
                 xml.append(spliceLine(relation));
             }
@@ -88,11 +90,12 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
      */
     private String spliceModel(Relation relation)
     {
-        String style = "shape=billCard";
+        // 虚拟节点设置宽高为0，不显示
         if (relation.getVirtual()) {
             relation.setHeight(0);
             relation.setWidth(0);
         }
+        String style = "shape=billCard";
         return "<mxCell id=\"" + relation.getId() + "\"" +
                 " value=\"" + "\"" +
                 " style=\"" + style + ";whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0\"" +
@@ -131,7 +134,7 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
                 relation.setParentId(11111L);
             }
             relation.setId(obj.getLong("id"));
-            // 显示数据
+            // 设置需要显示的数据
             if (obj.containsKey("tpv_treenuser")) {
                 JSONObject userObject = obj.getObject("tpv_treenuser", JSONObject.class);
                 if (userObject.containsKey("name")) {
