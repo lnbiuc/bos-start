@@ -27,7 +27,7 @@ public class ShowGraph extends AbstractBillPlugIn
             // 设置动态表单id
             parameter.setFormId("tpv_app_showgraph");
             // 获取树型分录数据
-            DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeentryentity");
+            DynamicObjectCollection treeData = this.getModel().getEntryEntity("tpv_treeentity");
             if (treeData != null && !treeData.isEmpty()) {
                 // 加载数据
                 HashMap<String, Object> map = new HashMap<>();
