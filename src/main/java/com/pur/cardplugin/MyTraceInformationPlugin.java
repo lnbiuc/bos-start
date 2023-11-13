@@ -29,8 +29,6 @@ public class MyTraceInformationPlugin extends TraceInformationPlugin implements 
     private static final String[] colors = new String[]{"#098bff", "#00cccc", "#87db3b", "#ffd72b"};
     private static final String cardId = "tpv_app_deal_trace";
 
-    private static final String cardName = ResManager.loadKDString("交易信息", "TraceInformationPlugin_0", cardId, new Object[0]);
-
     @Override
     public void registerListener(EventObject e)
     {
@@ -176,7 +174,6 @@ public class MyTraceInformationPlugin extends TraceInformationPlugin implements 
             outticketLabel.setText(ResManager.loadKDString("支出票据", "TraceInformationPlugin_7", cardId, new Object[0]) + "(" + outTicket + unit + ")");
             outticketsumLabel.setText(this.getCurrencyName(currencyId, new String[]{"sign"}) + this.getNumberFormat(monthModel.getOutTicketSum().divide(new BigDecimal(10000), 2, RoundingMode.HALF_UP)));
         }
-//        this.drawPiechart(currencyId, new BigDecimal("321"), currencyId, new BigDecimal("3123.12"), sumMoneyUnit, "trace", cardName);
         renderPieChart(monthModel);
     }
 
