@@ -21,6 +21,7 @@ public class TraceInfoModel
     /**
      * name: 币别id currencyId
      * value: 金额 price
+     * pieData list中数据最好为3条
      */
     private List<ItemValue> pieData;
 
