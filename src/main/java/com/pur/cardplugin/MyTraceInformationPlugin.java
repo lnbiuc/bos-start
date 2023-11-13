@@ -150,7 +150,7 @@ public class MyTraceInformationPlugin extends TraceInformationPlugin implements 
         // 收入资金
         Integer inTotal = monthModel.getInTotal();
         if (inTotal != null && inTotal.compareTo(0) != 0) {
-            intotalLabel.setText(ResManager.loadKDString("收入票据", "TraceInformationPlugin_6", cardId, new Object[0]) + "(" + inTotal + unit + ")");
+            intotalLabel.setText(ResManager.loadKDString("收入资金", "TraceInformationPlugin_6", cardId, new Object[0]) + "(" + inTotal + unitCapital + ")");
             intotalsumLabel.setText(this.getCurrencyName(currencyId, "sign") + this.getNumberFormat(monthModel.getInTotalSum().divide(new BigDecimal(10000), 2, RoundingMode.HALF_UP)));
         }
 

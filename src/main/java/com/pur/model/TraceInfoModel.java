@@ -7,15 +7,25 @@ import java.util.List;
 
 public class TraceInfoModel
 {
+    // 主币别
     private Long mainCurrencyId;
+    // 总金额
     private BigDecimal sumMoney;
+    // 收入笔数
     private Integer inTotal;
+    // 支出笔数
     private Integer outTotal;
+    // 收入票据张数
     private Integer inTicket;
+    // 支出票据张数
     private Integer outTicket;
+    // 收入总金额
     private BigDecimal inTotalSum;
+    // 支出总金额
     private BigDecimal outTotalSum;
+    // 收入票据总金额
     private BigDecimal inTicketSum;
+    // 支出票据总金额
     private BigDecimal outTicketSum;
 
     /**
