@@ -1,6 +1,7 @@
 package com.pur.cardplugin;
 
 import com.pur.model.ChartDataModel;
+import com.pur.model.PieChartModel;
 import com.pur.model.StatisticalChartModel;
 import kd.bos.dataentity.resource.ResManager;
 import kd.bos.entity.datamodel.events.PropertyChangedArgs;
@@ -56,19 +57,30 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
 
     private void dateChange(Date startDate, Date endDate)
     {
-        // Search Data by Date
+        // 根据日期查询数据
+        // 设置统计图数据
         StatisticalChartModel chartModel = new StatisticalChartModel();
+        // 设置柱状图标识
         chartModel.setChartId("tpv_customchartap");
+        // 设置X轴数据类型
         chartModel.setXDataType(AxisType.category);
+        // 设置X轴数据
         String[] xItems = {"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月(月份)"};
         chartModel.setXItems(xItems);
+        // 设置Y轴数据类型
         chartModel.setYDataType(AxisType.value);
+        // 设置XY轴名称
         chartModel.setXFieldName("X轴");
         chartModel.setYFieldName("Y轴");
+        // 设置折线图数据
         ChartDataModel data1 = new ChartDataModel();
+        // 图例名称
         data1.setName("数据1");
+        // 设置为折线图
         data1.setType(ChartType.line);
+        // 设置折线图颜色
         data1.setColor("#FF9400");
+        // 设置折线图数据
         data1.setData(Arrays.asList(
                 new ItemValue(null, 34),
                 new ItemValue(null, 13),
@@ -83,6 +95,8 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
                 new ItemValue(null, 32),
                 new ItemValue(null, 87)
         ));
+
+        // 添加第二个折线图数据
         ChartDataModel data2 = new ChartDataModel();
         data2.setName("数据2");
         data2.setType(ChartType.line);
@@ -101,17 +115,82 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
                 new ItemValue(null, 65),
                 new ItemValue(null, 32)
         ));
-        chartModel.setSeriesData(Arrays.asList(data1, data2));
-        renderData(chartModel);
+
+        // 添加第三个折线图数据
+        ChartDataModel data3 = new ChartDataModel();
+        data3.setName("数据3");
+        data3.setType(ChartType.line);
+        data3.setColor("#FF736C");
+        data3.setData(Arrays.asList(
+                new ItemValue(null, 56),
+                new ItemValue(null, 75),
+                new ItemValue(null, 34),
+                new ItemValue(null, 34),
+                new ItemValue(null, 32),
+                new ItemValue(null, 87),
+                new ItemValue(null, 23),
+                new ItemValue(null, 65),
+                new ItemValue(null, 32),
+                new ItemValue(null, 87),
+                new ItemValue(null, 13),
+                new ItemValue(null, 23)
+        ));
+        chartModel.setSeriesData(Arrays.asList(data1, data2, data3));
+
+        // 饼图1
+        PieChartModel pieChartModel1 = new PieChartModel();
+        // 设置饼图标识
+        pieChartModel1.setChartId("tpv_piechartap_confirm");
+        // 设置饼图标题（饼图中间的文字）
+        pieChartModel1.setTitle("90%");
+        // 设置饼图数据
+        pieChartModel1.setData(new ItemValue[]{
+                new ItemValue("data", 90, "#18BC71"),
+                new ItemValue("empty", 10, "#EEEEEE")});
+        // 设置图例图标标识
+        pieChartModel1.setLabelIconId("tpv_labelap11");
+        // 设置图例图标
+        pieChartModel1.setLabelIcon("✨");
+        // 设置图例名称标识
+        pieChartModel1.setLabelTextId("tpv_queryrate");
+        // 设置图例名称
+        pieChartModel1.setLabelText("查询率");
+
+        // 饼图2
+        PieChartModel pieChartModel2 = new PieChartModel();
+        pieChartModel2.setChartId("tpv_piechartap_response");
+        pieChartModel2.setTitle("80%");
+        pieChartModel2.setData(new ItemValue[]{
+                new ItemValue("data", 80, "#308AF0"),
+                new ItemValue("empty", 20, "#EEEEEE")});
+        pieChartModel2.setLabelIconId("tpv_labelap12");
+        pieChartModel2.setLabelIcon("✨");
+        pieChartModel2.setLabelTextId("tpv_confirmrate");
+        pieChartModel2.setLabelText("确认率");
+
+        // 饼图3
+        PieChartModel pieChartModel3 = new PieChartModel();
+        pieChartModel3.setChartId("tpv_piechartap_query");
+        pieChartModel3.setTitle("70%");
+        pieChartModel3.setData(new ItemValue[]{
+                new ItemValue("data", 70, "#FF736C"),
+                new ItemValue("empty", 30, "#EEEEEE")});
+        pieChartModel3.setLabelIconId("tpv_labelap13");
+        pieChartModel3.setLabelIcon("✨");
+        pieChartModel3.setLabelTextId("tpv_responserate");
+        pieChartModel3.setLabelText("答复率");
+
+        // 渲染图像
+        renderData(chartModel, pieChartModel1, pieChartModel2, pieChartModel3);
     }
 
-    private void renderData(StatisticalChartModel chartModel)
+    private void renderData(StatisticalChartModel chartModel, PieChartModel pieChartModel1, PieChartModel pieChartModel2, PieChartModel pieChartModel3)
     {
         this.initStatisticalChart(chartModel);
         this.initLapDes();
-        this.initPieChart();
-        this.initPieChart1();
-        this.initPieChart2();
+        this.initPieChart(pieChartModel1);
+        this.initPieChart(pieChartModel2);
+        this.initPieChart(pieChartModel3);
     }
 
     private void initStatisticalChart(StatisticalChartModel chartModel)
@@ -139,46 +218,6 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
             List<ItemValue> data = seriesDatum.getData();
             series.setData(data.toArray(new ItemValue[0]));
         }
-    }
-
-    private void initCustomCharTap()
-    {
-        // 统计图
-        Chart chart = this.getControl("tpv_customchartap");
-        // 设置X轴属性，AxisType.category 离散的类目数据
-        Axis xAxis = chart.createXAxis(ResManager.loadKDString("X轴", "PayslipManagePlugin_0", "swc-hspp-formplugin", new Object[0]), AxisType.category);
-        // 设置X轴数据
-        xAxis.setCategorys(new String[]{"2011", "2012", "2013", "2014", "2015", "2016", ResManager.loadKDString("2017(年份)", "PayslipManagePlugin_13", "swc-hspp-formplugin", new Object[0])});
-        // 设置Y轴属性，AxisType.value 连续的数值数据
-        chart.createYAxis(ResManager.loadKDString("人数", "PayslipManagePlugin_1", "swc-hspp-formplugin", new Object[0]), AxisType.value);
-
-        // 创建条形图
-        Series series = chart.createBarSeries(ResManager.loadKDString("已发布工资条数量", "PayslipManagePlugin_2", "swc-hspp-formplugin", new Object[0]));
-        // 使用折线图
-        series.setType(ChartType.line);
-        // 设置条形图颜色
-        series.setItemColor("#FF9400");
-        // 设置数据
-        series.addData(new ItemValue(34, null));
-        series.addData(new ItemValue(13, null));
-        series.addData(new ItemValue(75, null));
-        series.addData(new ItemValue(32, null));
-        series.addData(new ItemValue(87, null));
-        series.addData(new ItemValue(34, null));
-        series.addData(new ItemValue(65, null));
-
-        // 创建条形图
-        Series series1 = chart.createBarSeries(ResManager.loadKDString("已查看工资条数量", "PayslipManagePlugin_3", "swc-hspp-formplugin", new Object[0]));
-        series1.setType(ChartType.line);
-        series1.setItemColor("#655DD4");
-        series1.addData(new ItemValue(23, null));
-        series1.addData(new ItemValue(56, null));
-        series1.addData(new ItemValue(23, null));
-        series1.addData(new ItemValue(78, null));
-        series1.addData(new ItemValue(34, null));
-        series1.addData(new ItemValue(12, null));
-        series1.addData(new ItemValue(54, null));
-        // 设置统计图位置
         chart.setLegendAlign(XAlign.right, YAlign.top);
     }
 
@@ -202,77 +241,41 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
         content.setConent(contentStr);
     }
 
-    private void initPieChart()
+    private void initPieChart(PieChartModel pieChartModel)
     {
-        PieChart pieChart = (PieChart) this.getControl("tpv_piechartap_query");
+        PieChart pieChart = this.getControl(pieChartModel.getChartId());
         pieChart.setShowTitle(true);
-        pieChart.setTitlePropValue("text", "90%");
+        // 设置标题
+        pieChart.setTitlePropValue("text", pieChartModel.getTitle());
+        // 设置标题位置
         pieChart.setTitleAlign(XAlign.center, YAlign.center);
+        // 设置标题样式
         Map<String, Object> textStyle = new HashMap<>();
         textStyle.put("fontSize", "20");
         pieChart.setTitlePropValue("textStyle", textStyle);
+        // 设置副标题
         Map<String, Object> subTextStyle = new HashMap<>();
         subTextStyle.put("fontSize", "10");
         subTextStyle.put("color", "#999999");
+        // 设置副标题样式
         pieChart.setTitlePropValue("subtextStyle", subTextStyle);
+        // 设置图形属性
         PieSeries pieSeries = pieChart.createPieSeries("");
         pieSeries.setRadius("60%", "70%");
         pieSeries.setPropValue("hoverAnimation", Boolean.TRUE);
+        // 设置标签
         Label label = new Label();
         label.setShow(false);
         label.setColor("#5f00bf");
         pieSeries.setLabel(label);
-        pieSeries.addData(new ItemValue("data", 90, "#18BC71"));
-        pieSeries.addData(new ItemValue("empty", 10, "#EEEEEE"));
-        kd.bos.form.control.Label labelap11 = (kd.bos.form.control.Label) this.getControl("tpv_labelap11");
-        labelap11.setText("■");
-        kd.bos.form.control.Label queryrate = (kd.bos.form.control.Label) this.getControl("tpv_queryrate");
-        queryrate.setText(ResManager.loadKDString("查询率", "PayslipManagePlugin_10", "swc-hspp-formplugin", new Object[0]));
-    }
-
-    private void initPieChart1()
-    {
-        PieChart pieChart = (PieChart) this.getControl("tpv_piechartap_confirm");
-        pieChart.setShowTitle(true);
-        pieChart.setTitlePropValue("text", "80%");
-        pieChart.setTitleAlign(XAlign.center, YAlign.center);
-        Map<String, Object> textStyle = new HashMap<>();
-        textStyle.put("fontSize", "20");
-        pieChart.setTitlePropValue("textStyle", textStyle);
-        PieSeries pieSeries = pieChart.createPieSeries("");
-        pieSeries.setRadius("60%", "70%");
-        pieSeries.setPropValue("hoverAnimation", Boolean.FALSE);
-        Label label = new Label();
-        label.setShow(false);
-        pieSeries.setLabel(label);
-        pieSeries.addData(new ItemValue("data", 80, "#308AF0"));
-        pieSeries.addData(new ItemValue("empty", 20, "#EEEEEE"));
-        kd.bos.form.control.Label labelap12 = (kd.bos.form.control.Label) this.getControl("tpv_labelap12");
-        labelap12.setText("■");
-        kd.bos.form.control.Label confirmrate = (kd.bos.form.control.Label) this.getControl("tpv_confirmrate");
-        confirmrate.setText(ResManager.loadKDString("确认率", "PayslipManagePlugin_11", "swc-hspp-formplugin", new Object[0]));
-    }
-
-    private void initPieChart2()
-    {
-        PieChart pieChart = (PieChart) this.getControl("tpv_piechartap_response");
-        pieChart.setShowTitle(true);
-        pieChart.setTitlePropValue("text", "70%");
-        pieChart.setTitleAlign(XAlign.center, YAlign.center);
-        Map<String, Object> textStyle = new HashMap<>();
-        textStyle.put("fontSize", "20");
-        pieChart.setTitlePropValue("textStyle", textStyle);
-        PieSeries pieSeries = pieChart.createPieSeries("");
-        pieSeries.setRadius("60%", "70%");
-        pieSeries.setPropValue("hoverAnimation", Boolean.FALSE);
-        Label label = new Label();
-        label.setShow(false);
-        pieSeries.setLabel(label);
-        pieSeries.addData(new ItemValue("data", 70, "#FF736C"));
-        pieSeries.addData(new ItemValue("empty", 30, "#EEEEEE"));
-        kd.bos.form.control.Label labelap13 = (kd.bos.form.control.Label) this.getControl("tpv_labelap13");
-        labelap13.setText("■");
-        kd.bos.form.control.Label responserate = (kd.bos.form.control.Label) this.getControl("tpv_responserate");
-        responserate.setText(ResManager.loadKDString("答复率", "PayslipManagePlugin_12", "swc-hspp-formplugin", new Object[0]));
+        // 设置饼图数据
+        for (ItemValue datum : pieChartModel.getData()) {
+            pieSeries.addData(datum);
+        }
+        // 设置图例
+        kd.bos.form.control.Label labelap11 = this.getControl(pieChartModel.getLabelIconId());
+        labelap11.setText(pieChartModel.getLabelIcon());
+        kd.bos.form.control.Label queryrate = this.getControl(pieChartModel.getLabelTextId());
+        queryrate.setText(pieChartModel.getLabelText());
     }
 }
