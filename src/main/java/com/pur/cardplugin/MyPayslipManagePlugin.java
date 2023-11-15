@@ -29,6 +29,9 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
         dateChange(start, end);
     }
 
+    /**
+     * 日期变化时，修改图形值
+     */
     @Override
     public void propertyChanged(PropertyChangedArgs e)
     {
@@ -186,27 +189,39 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
 
     private void renderData(StatisticalChartModel chartModel, PieChartModel pieChartModel1, PieChartModel pieChartModel2, PieChartModel pieChartModel3)
     {
+        // 统计图
         this.initStatisticalChart(chartModel);
+        // 左上角文字信息
         this.initLapDes();
+        // 饼图
         this.initPieChart(pieChartModel1);
         this.initPieChart(pieChartModel2);
         this.initPieChart(pieChartModel3);
     }
 
+    /**
+     * 初始化统计图
+     */
     private void initStatisticalChart(StatisticalChartModel chartModel)
     {
+        // 获取统计图控件
         Chart chart = this.getControl(chartModel.getChartId());
         if (chart == null) {
             return;
         }
+        // 设置X轴名称，数据类型
         Axis xAxis = chart.createXAxis(ResManager.loadKDString(chartModel.getXFieldName(), "PayslipManagePlugin_0", "swc-hspp-formplugin", new Object[0]), chartModel.getXDataType());
+        // 如果该轴的数据时离散的，需要设置所有类目数据
         if (AxisType.category.equals(chartModel.getXDataType())) {
             xAxis.setCategorys(chartModel.getXItems());
         }
+        // 设置X轴名称，数据类型
         Axis yAxis = chart.createYAxis(ResManager.loadKDString(chartModel.getYFieldName(), "PayslipManagePlugin_0", "swc-hspp-formplugin", new Object[0]), chartModel.getYDataType());
+        // 如果该轴的数据时离散的，需要设置所有类目数据
         if (AxisType.category.equals(chartModel.getYDataType())) {
             yAxis.setCategorys(chartModel.getYItems());
         }
+        // 设置图表数据
         List<ChartDataModel> seriesData = chartModel.getSeriesData();
         if (seriesData == null || seriesData.isEmpty()) {
             return;
@@ -218,12 +233,16 @@ public class MyPayslipManagePlugin extends PayslipManagePlugin
             List<ItemValue> data = seriesDatum.getData();
             series.setData(data.toArray(new ItemValue[0]));
         }
+        // 设置图例的位置
         chart.setLegendAlign(XAlign.right, YAlign.top);
     }
 
+    /**
+     * 左上角文字信息
+     */
     private void initLapDes()
     {
-        Html content = (Html) this.getControl("tpv_htmlap");
+        Html content = this.getControl("tpv_htmlap");
         String contentStr = MessageFormat.format(
                 ResManager.loadKDString(
                         "{0}该期间内，您总共发布了{1}条工资条，产生了{2}条问询反馈，{3}名员工操作了确认。{4}其中，您提醒了{5}名员工操作查询，催办了{6}名员工的问询反馈。{7}"
