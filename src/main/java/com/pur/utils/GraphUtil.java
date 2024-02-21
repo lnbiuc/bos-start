@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * 位置调整工具类
  */
-public class ConnectGraphUtil
+public class GraphUtil
 {
 
-    private static int SPACE = 20;
+    private static final int SPACE = 20;
 
     public static void createRelation(List<Relation> relations)
     {

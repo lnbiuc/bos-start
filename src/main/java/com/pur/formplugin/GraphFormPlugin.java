@@ -3,7 +3,7 @@ package com.pur.formplugin;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pur.model.Relation;
-import com.pur.utils.ConnectGraphUtil;
+import com.pur.utils.GraphUtil;
 import kd.bos.bill.AbstractBillPlugIn;
 import kd.bos.workflow.design.plugin.IWorkflowDesigner;
 
@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigner
+public class GraphFormPlugin extends AbstractBillPlugIn implements IWorkflowDesigner
 {
 
     @Override
     public Map<String, Object> getDesignerInitData(Map<String, Object> map)
     {
-        // 获取树形单据体数据
         JSONArray treeEntity = this.getView().getFormShowParameter().getCustomParam("entity");
         // 转换为流程图数据
         List<Relation> relations = convert(treeEntity);
         // 计算位置
-        ConnectGraphUtil.createRelation(relations);
+        GraphUtil.createRelation(relations);
+
         StringBuilder relationXml = new StringBuilder();
         // 拼接xml
         String xml = spliceXml(relations, relationXml);
@@ -30,89 +30,6 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         return map;
     }
 
-    /**
-     * 拼接xml
-     *
-     * @param relations 流程图数据
-     * @param xml       xml
-     * @return xml
-     */
-    private String spliceXml(List<Relation> relations, StringBuilder xml)
-    {
-        for (Relation relation : relations) {
-            // 添加流程节点
-            xml.append(spliceModel(relation));
-            // 如果有父子级关系，添加节点间连线
-            if (relation.getParentId() != null && relation.getParentId() != 0) {
-                xml.append(spliceLine(relation));
-            }
-            List<Relation> targets = relation.getTargets();
-            if (!targets.isEmpty()) {
-                spliceXml(targets, xml);
-            }
-        }
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                "<mxGraphModel grid=\"0\">" +
-                "<root>" +
-                "    <mxCell id=\"node_0\"/>" +
-                "    <mxCell id=\"node_1\" type=\"Diagram\" group=\"ProcessControl\" parent=\"node_0\">" +
-                "        <Object process_id=\"bill_circulaterelation\" as=\"properties\"/>" +
-                "    </mxCell>" +
-                xml.toString() +
-                "</root>" +
-                "</mxGraphModel>";
-    }
-
-    /**
-     * 拼接线
-     *
-     * @param relation 流程图数据
-     * @return 线
-     */
-    private String spliceLine(Relation relation)
-    {
-        return "<mxCell id=\"node_line_" + relation.getId() + "\"" +
-                "        style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeColor=#A1CFFF!important;;\"" +
-                "        type=\"SequenceFlow\" " +
-                "        parent=\"node_1\" " +
-                "        edge=\"1\" " +
-                "        source=\"" + relation.getParentId() + "\"" +
-                "        target=\"" + relation.getId() + "\">" +
-                "    <mxGeometry relative=\"1\" as=\"geometry\"/>" +
-                "</mxCell>";
-    }
-
-    /**
-     * 拼接节点
-     *
-     * @param relation 流程图数据
-     * @return 节点
-     */
-    private String spliceModel(Relation relation)
-    {
-        // 虚拟节点设置宽高为0，不显示
-        if (relation.getVirtual()) {
-            relation.setHeight(0);
-            relation.setWidth(0);
-        }
-        String style = "shape=billCard";
-        return "<mxCell id=\"" + relation.getId() + "\"" +
-                " value=\"" + "\"" +
-                " style=\"" + style + ";whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0\"" +
-                " type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\" clickable=\"false\">" +
-                "<mxGeometry width=\"" + relation.getWidth() + "\"" +
-                " height=\"" + relation.getHeight() + "\"" +
-                " x=\"" + relation.getX() + "\"" +
-                " y=\"" + relation.getY() + "\" as=\"geometry\"/>" +
-                "<Object as=\"properties\"" +
-                "        title=\"" + relation.getTitle() + "\"" +
-                "        subtitle=\"" + relation.getSubTitle() + "\"" +
-                "        name=\"" + relation.getText1() + "\"" +
-                "        department=\"" + relation.getText2() + "\"" +
-                "        status=\"" + relation.getText3() + "\"" +
-                "        />" +
-                "</mxCell>";
-    }
 
     /**
      * 转换为流程图数据
@@ -205,5 +122,89 @@ public class GetGraphData extends AbstractBillPlugIn implements IWorkflowDesigne
         virtualRoot.setTargets(rootNodeTarget);
         relations.add(0, virtualRoot);
         return relations;
+    }
+
+    /**
+     * 拼接xml
+     *
+     * @param relations 流程图数据
+     * @param xml       xml
+     * @return xml
+     */
+    private String spliceXml(List<Relation> relations, StringBuilder xml)
+    {
+        for (Relation relation : relations) {
+            // 添加流程节点
+            xml.append(spliceModel(relation));
+            // 如果有父子级关系，添加节点间连线
+            if (relation.getParentId() != null && relation.getParentId() != 0) {
+                xml.append(spliceLine(relation));
+            }
+            List<Relation> targets = relation.getTargets();
+            if (!targets.isEmpty()) {
+                spliceXml(targets, xml);
+            }
+        }
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<mxGraphModel grid=\"0\">" +
+                "<root>" +
+                "    <mxCell id=\"node_0\"/>" +
+                "    <mxCell id=\"node_1\" type=\"Diagram\" group=\"ProcessControl\" parent=\"node_0\">" +
+                "        <Object process_id=\"bill_circulaterelation\" as=\"properties\"/>" +
+                "    </mxCell>" +
+                xml.toString() +
+                "</root>" +
+                "</mxGraphModel>";
+    }
+
+    /**
+     * 拼接线
+     *
+     * @param relation 流程图数据
+     * @return 线
+     */
+    private String spliceLine(Relation relation)
+    {
+        return "<mxCell id=\"node_line_" + relation.getId() + "\"" +
+                "        style=\"edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeColor=#A1CFFF!important;;\"" +
+                "        type=\"SequenceFlow\" " +
+                "        parent=\"node_1\" " +
+                "        edge=\"1\" " +
+                "        source=\"" + relation.getParentId() + "\"" +
+                "        target=\"" + relation.getId() + "\">" +
+                "    <mxGeometry relative=\"1\" as=\"geometry\"/>" +
+                "</mxCell>";
+    }
+
+    /**
+     * 拼接节点
+     *
+     * @param relation 流程图数据
+     * @return 节点
+     */
+    private String spliceModel(Relation relation)
+    {
+        // 虚拟节点设置宽高为0，不显示
+        if (relation.getVirtual()) {
+            relation.setHeight(0);
+            relation.setWidth(0);
+        }
+        String style = "shape=billCard";
+        return "<mxCell id=\"" + relation.getId() + "\"" +
+                " value=\"" + "\"" +
+                " style=\"" + style + ";whiteSpace=wrap;spacingLeft=50;spacingRight=10;overflow=hidden;resizable=0\"" +
+                " type=\"billCard\" parent=\"node_1\" vertex=\"1\" showRecords=\"false\" clickable=\"false\">" +
+                "<mxGeometry width=\"" + relation.getWidth() + "\"" +
+                " height=\"" + relation.getHeight() + "\"" +
+                " x=\"" + relation.getX() + "\"" +
+                " y=\"" + relation.getY() + "\" as=\"geometry\"/>" +
+                "<Object as=\"properties\"" +
+                "        title=\"" + relation.getTitle() + "\"" +
+                "        subtitle=\"" + relation.getSubTitle() + "\"" +
+                "        name=\"" + relation.getText1() + "\"" +
+                "        department=\"" + relation.getText2() + "\"" +
+                "        status=\"" + relation.getText3() + "\"" +
+                "        />" +
+                "</mxCell>";
     }
 }
